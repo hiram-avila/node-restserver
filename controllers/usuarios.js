@@ -1,4 +1,7 @@
 const { response, request } = require('express');
+const Usuario = require('../models/usuario');
+const bcryptjs = require('bcryptjs'); 
+
 
 
 const usuariosGet = (req = request, res = response) => {
@@ -13,16 +16,30 @@ const usuariosGet = (req = request, res = response) => {
         page, 
         limit
     });
+    
+    console.log(usuariosGet);
 }
 
-const usuariosPost = (req, res = response) => {
 
-    const { nombre, edad } = req.body;
+async function usuariosPost (req, res = response)  {
+
+    const { nombre, password, correo, rol } = req.body; 
+    const usuario = new Usuario( { nombre, correo, password, rol } );
+// console.log(existeRol)
+ 
+            //Encriptar la contraseña
+    const salt = bcryptjs.genSaltSync();
+    usuario.password = bcryptjs.hashSync( password, salt )
+
+  //const hash = bcrypt.hashSync(myPlaintextPassword, saltRounds);
+
+            //guardar en DB 
+    await usuario.save(); 
+    // console.log(usuario) 
 
     res.json({
-        msg: 'post API - usuariosPost',
-        nombre, 
-        edad
+
+        usuario
     });
 }
 
@@ -49,6 +66,11 @@ const usuariosDelete = (req, res = response) => {
 }
 
 
+const usuarioNo = (req, res ) => {
+    res.send('jsjs')
+}
+
+
 
 
 module.exports = {
@@ -57,4 +79,5 @@ module.exports = {
     usuariosPut,
     usuariosPatch,
     usuariosDelete,
+    usuarioNo,
 }

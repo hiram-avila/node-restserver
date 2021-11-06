@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const { dbConnection } = require('../DB/config');
 
 class Server {
 
@@ -8,11 +9,18 @@ class Server {
         this.port = process.env.PORT;
         this.usuariosPath = '/api/usuarios';
 
+        //conectar a base de datos
+        this.conectarDb()
+
         // Middlewares
         this.middlewares();
 
         // Rutas de mi aplicación
-        this.routes();
+        this.routes();  
+    }
+
+    async conectarDb(){
+        await dbConnection(); 
     }
 
     middlewares() {
@@ -30,7 +38,16 @@ class Server {
 
     routes() {
         this.app.use( this.usuariosPath, require('../routes/usuarios'));
-    }
+               //manejar rutas no existentes
+               
+            this.app.get('/masc', (req, res) => {
+                 res.send('mascotas')
+             }) 
+                
+            this.app.get('*', (req, res) => {
+                res.send('no hay nada pedazo')
+             }) 
+     }
 
     listen() {
         this.app.listen( this.port, () => {
