@@ -4,7 +4,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 // const { appendFile } = require('fs');
 
-const { rol1, emailExiste } = require('../helpers/db-validators');  
+const { rol1, emailExiste, existeUsuarioPorID } = require('../helpers/db-validators');  
 
 
 
@@ -31,7 +31,13 @@ router.get('/hola', (req, res )=>{
 } );
 
 
-router.put('/:id', usuariosPut );
+router.put('/:id',[
+    check('id', 'No es un ID valido ').isMongoId(), 
+    check('id').custom ( existeUsuarioPorID ),
+    // check('rol').custom( rol1 ),
+
+    validarCampos
+], usuariosPut );
 
 router.post('/',[
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
@@ -44,7 +50,11 @@ router.post('/',[
 
 
 
-router.delete('/', usuariosDelete );
+router.delete('/:id',[
+    check('id', 'No es un ID valido ').isMongoId(), 
+    check('id').custom ( existeUsuarioPorID ),
+    validarCampos,
+], usuariosDelete );
 
 router.patch('/', usuariosPatch );
 
