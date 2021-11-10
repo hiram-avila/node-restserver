@@ -11,11 +11,13 @@ const usuariosGet = async(req = request, res = response) => {
         .skip(Number( desde ))
         .limit(Number(limite))
 
+        
+
     res.json({
             usuarios
     });
-    
-    console.log(usuariosGet);
+     
+    // console.log(usuarios);
 }
 
 
